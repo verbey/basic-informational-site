@@ -1,33 +1,24 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
+const app = express();
 
-const server = http.createServer((req, res) => {
-	res.setHeader('Content-Type', 'text/html');
+require('dotenv').config();
 
-	let file = '';
-	if (req.url === '/') {
-		res.statusCode = 200;
-		file = 'index.html';
-	} else if (req.url === '/about') {
-		res.statusCode = 200;
-		file = 'about.html';
-	} else if (req.url === '/contact-me') {
-		res.statusCode = 200;
-		file = 'contact-me.html';
-	} else {
-		res.statusCode = 404;
-		file = '404.html';
-	}
+const options = { root: __dirname };
 
-	fs.readFile(`./${file}`, (err, data) => {
-		if (err) {
-			console.log(err);
-			res.end();
-		} else {
-			res.write(data);
-			res.end();
-		}
-	});
+app.get('/', (req, res) => {
+	res.sendFile('./index.html', options);
+});
+app.get('/about', (req, res) => {
+	res.sendFile('./about.html', options);
+});
+app.get('/contact-me', (req, res) => {
+	res.sendFile('./contact-me.html', options);
+});
+app.get('*', (req, res) => {
+	res.sendFile('./404.html', options);
 });
 
-server.listen(8080);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+	console.log(`My first Express app - listening on port ${PORT}!`)
+);
